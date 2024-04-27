@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal Form</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <style>
+        body {
+            background-color: #f0f0f0; /* Light gray background */
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333; /* Dark gray heading */
+            margin-bottom: 20px;
+        }
+
+        form {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+            width: 500px; /* Adjust width as needed */
+            margin: 0 auto;
+            background-color: #fff; /* White form background */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        .g-recaptcha {
+            margin-bottom: 10px;
+        }
+
+        #message,
+        #messageDiv {
+            margin-top: 10px;
+            color: red;
+        }
+
+        button[type="submit"] {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button[disabled] {
+            background-color: #ccc; /* Gray out disabled button */
+            cursor: default;
+        }
+    </style>
+</head>
+<body>
+<h1>Add a New Animal</h1>
+<form id="animalForm">
+    <label for="animalName">Animal Name:</label>
+    <input type="text" id="animalName" name="animalName" required>
+    <br>
+    <label for="animalCategory">Animal Category:</label>
+    <select id="animalCategory" name="animalCategory">
+        <option value="mammals">Mammals</option>
+        <option value="birds">Birds</option>
+        <option value="reptiles">Reptiles</option>
+        <option value="amphibians">Amphibians</option>
+        <option value="fish">Fish</option>
+        <option value="arthropods">Arthropods</option>
+        <option value="mollusks">Mollusks</option>
+        <option value="echinoderms">Echinoderms</option>
+    </select>
+    <br>
+    <label for="animalDescription">Animal Description:</label>
+    <textarea id="animalDescription" name="animalDescription" required></textarea>
+    <br>
+    <label for="animalLifeExpectancy">Animal Life Expectancy:</label>
+    <select id="animalLifeExpectancy" name="animalLifeExpectancy">
+        <option value="0-2">0-2 years</option>
+        <option value="2-5">2-5 years</option>
+        <option value="5-10">5-10 years</option>
+        <option value="10-15">10-15 years</option>
+        <option value="15-20">15-20 years</option>
+    </select>
+    <br>
+    <label for="imageFile">Animal Image:</label>
+    <input type="file" id="imageFile" name="imageFile">
+    <br>
+
+    <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY"></div> <br>
+    <p>Solve the following equation to enable form submission:</p>
+    <span id="equation"></span>
+    <br>
+    <input type="number" id="userAnswer" placeholder="Enter your answer">
+    <br>
+    <button type="button" id="submitButton" >Submit</button>
+    <p id="messages"></p>
+
+
+    <button type="submit">Save Animal</button>
+</form>
+
+<div id="message"></div>
+
+
+<script>
+    const animalForm = document.getElementById('animalForm');
+ const messageDiv = document.getElementById('message');
+
+ // Define the function to generate a random number equation
+function generateRandomEquation() {
+  const equationSpan = document.getElementById('equation');
+  const userAnswerInput = document.getElementById('userAnswer');
+  const submitButton = document.getElementById('submitButton');
+
+  const num1 = Math.floor(Math.random() * 10) + 1; // Generate random numbers between 1 and 10
+  const num2 = Math.floor(Math.random() * 10) + 1;
+  const operator = Math.random() < 0.5 ? '+' : '-'; // Choose + or - randomly
+
+  const equation = `${num1} ${operator} ${num2} =`; // Corrected template literal
+  equationSpan.textContent = equation;
+
+  let correctAnswer;
+  if (operator === '+') {
+    correctAnswer = num1 + num2;
+  } else {
+    correctAnswer = num1 - num2;
+  }
+
+  // Add event listener to check the user's answer
+  submitButton.addEventListener('click', function() {
+    const userAnswer = parseInt(userAnswerInput.value);
+    if (userAnswer === correctAnswer) {
+      // Show message if the answer is correct
+      messageDiv.textContent = "Correct! You can now submit the form.";
+      submitButton.disabled = false; // Enable submit button
+      userAnswerInput.value = ""; // Clear input field
+      generateRandomEquation(); // Generate a new equation
+    } else {
+      // Show message if the answer is incorrect
+      messageDiv.textContent = "Incorrect answer. Please try again.";
+      userAnswerInput.value = ""; // Clear input field
+    }
+  });
+}
+
+// Call the function to generate the initial equation
+generateRandomEquation();
+
+ animalForm.addEventListener('submit', function(event) {
+   event.preventDefault();
+
+   const animalData = {
+     animalName: document.getElementById('animalName').value,
+     animalCategory: document.getElementById('animalCategory').value,
+     animalDescription: document.getElementById('animalDescription').value,
+     animalLifeExpectancy: document.getElementById('animalLifeExpectancy').value
+   };
+
+    const animalForm = document.getElementById('animalForm');
+      const messageDiv = document.getElementById('message');
+      const equationSpan = document.getElementById('equation');
+      const userAnswerInput = document.getElementById('userAnswer');
+      const submitButton = document.getElementById('submitButton');
+
+// Disable form submission by default
+animalForm.addEventListener('submit', function(event) {
+  event.preventDefault();
+  messageDiv.textContent = "Please solve the math equation to submit the form.";
+});
+
+   const formData = new FormData();
+   formData.append('animalName', animalData.animalName);
+   formData.append('animalCategory', animalData.animalCategory);
+   formData.append('animalDescription', animalData.animalDescription);
+   formData.append('animalLifeExpectancy', animalData.animalLifeExpectancy);
+
+   const imageFile = document.getElementById('imageFile').files[0];
+   if (imageFile) {
+     formData.append('imageFile', imageFile);
+   }
+
+   fetch('/animal/savedata', {
+     method: 'POST',
+     body: formData
+   })
+   .then(response => response.json())
+   .then(data => {
+     messageDiv.textContent = "Animal saved successfully!";
+   })
+   .catch(error => {
+     console.error('Error saving animal:', error);
+     messageDiv.textContent = "Error: Could not save animal.";
+   });
+ });
+
+</script>
+</body>
+</html>
